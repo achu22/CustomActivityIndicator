@@ -13,10 +13,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
-        showActivityView()
-        
-        Timer.scheduledTimer(timeInterval: 10.0, target: self, selector: #selector(stopActivityView), userInfo: nil, repeats: false)
     }
 
     func stopActivityView() {
@@ -28,7 +24,11 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-
+    @IBAction func startActivityLoading(_ sender: Any) {
+        showActivityView()
+        Timer.scheduledTimer(timeInterval: 4.0, target: self, selector: #selector(stopActivityView), userInfo: nil, repeats: false)
+    }
+    
 }
 
 
@@ -50,7 +50,11 @@ extension UIViewController {
         activityIndicatorView?.removeFromSuperview()
         alphaView?.removeFromSuperview()
         
-        self.view.isUserInteractionEnabled = true
+        guard let window = (UIApplication.shared.delegate as? AppDelegate)?.window else {
+            return
+        }
+        
+        window.isUserInteractionEnabled = true
         UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil)
         
     }
@@ -61,9 +65,13 @@ extension UIViewController {
         
         alphaView.alpha = 0.2
         
-        self.view.addSubview(alphaView)
-        self.view.addSubview(activityIndicatorView)
-        self.view.isUserInteractionEnabled = false
+        guard let window = (UIApplication.shared.delegate as? AppDelegate)?.window else {
+            return
+        }
+        
+        window.addSubview(alphaView)
+        window.addSubview(activityIndicatorView)
+        window.isUserInteractionEnabled = false
         UIAccessibilityPostNotification(UIAccessibilityLayoutChangedNotification, activityIndicatorView)
         
     }
